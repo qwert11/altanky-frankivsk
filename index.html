@@ -13,24 +13,33 @@
 :root{
   --bg:#EEF1EC; --paper:#FFFFFF; --ink:#1B2620; --muted:#5C6B62; --line:#CBD3CC; --ring:#B4C0B7; --road:#D7DDD5;
   --nature:#2E7D4F; --nature-soft:#DCEFE2; --built:#B5622B; --built-soft:#F5E3D2;
-  --accent:#1F5FA8; --price:#F4D77A; --price-ink:#3F3308; --warn:#B23A2E; --warn-soft:#F8E1DD; --ok:#2E7D4F;
+  --accent:#1F5FA8; --price:#F4D77A; --price-ink:#3F3308; --warn:#B23A2E; --warn-soft:#F8E1DD; --ok:#2E7D4F; --star:#E0A11C; --star-off:#CFD5CE;
   --shadow:0 1px 2px rgba(20,30,24,.08), 0 8px 24px rgba(20,30,24,.08);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
     --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
-    --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A;
+    --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A; --star:#F2BB4C; --star-off:#3A4740;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
 }
 :root[data-theme="dark"]{
   --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
   --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
-  --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A;
+  --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A; --star:#F2BB4C; --star-off:#3A4740;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
+.stars{position:relative;display:inline-block;font-size:13px;line-height:1;letter-spacing:1px;color:var(--star-off);vertical-align:-1px;white-space:nowrap}
+.stars::before{content:"★★★★★"}
+.stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--star);font-style:normal}
+.stars i::before{content:"★★★★★"}
+.stars.sm{font-size:10px;letter-spacing:.5px}
+.rate{display:inline-flex;gap:5px;align-items:center;white-space:nowrap}
+.rate b{font-size:12.5px}
+.rate small{color:var(--muted)}
+.lab .r{display:block;margin-top:1px;color:var(--muted);font-size:9.5px}
 body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45;padding-inline:16px;padding-block:20px 48px;-webkit-font-smoothing:antialiased}
 a{color:var(--accent)}
 h1,h2,h3{font-family:Manrope,"IBM Plex Sans",system-ui,sans-serif;text-wrap:balance;margin:0}
@@ -238,6 +247,9 @@ const listEl = document.getElementById('list');
 const zoneName = {city:"в черте города", suburb:"пригород", out:"за городом"};
 const wcText = {yes:'<span class="wc-yes">есть</span>', venue:'при заведении', unknown:'уточнить'};
 function tel(p){const num=p.split(' — ')[0]; const note=p.split(' — ')[1]; return `<a class="tel" href="tel:+38${num.replace(/\D/g,'')}">${num}${note?` <small>${note}</small>`:''}</a>`;}
+function stars(r,sm){const v=parseFloat(String(r).replace(',','.')); if(!(v>0)) return ''; return `<span class="stars${sm?' sm':''}" role="img" aria-label="${r} из 5"><i style="width:${(v/5*100).toFixed(0)}%"></i></span>`;}
+function reviewsWord(n){const m10=n%10,m100=n%100; if(m10===1&&m100!==11) return 'отзыв'; if(m10>=2&&m10<=4&&(m100<12||m100>14)) return 'отзыва'; return 'отзывов';}
+function ratingHtml(d){ if(!d.rating) return '<span class="rate"><small>без рейтинга Google</small></span>'; return `<span class="rate">${stars(d.rating)}<b>${d.rating}</b><small>${d.reviews?`${d.reviews} ${reviewsWord(d.reviews)} · `:''}Google</small></span>`; }
 function renderList(items){
   listEl.innerHTML='';
   if(!items.length){listEl.innerHTML='<div class="empty">Под такие фильтры ничего не осталось — снимите один из них.</div>';return;}
@@ -253,7 +265,7 @@ function renderList(items){
       <div class="addr">${d.village}</div>
       <div class="row"><span class="km">${String(d.km).replace('.',',')} км<small>${d.min} мин</small></span>${phones}${price}</div>
       <div class="desc">${d.desc}${d.priceNote?` <span style="color:var(--muted)">${d.priceNote}.</span>`:''}</div>
-      <div class="meta"><span>Туалет: <b>${wcText[d.wc]}</b></span>${d.rating?`<span>Google <b>${d.rating}</b>${d.reviews?` (${d.reviews})`:''}</span>`:''}<span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
+      <div class="meta">${ratingHtml(d)}<span>Туалет: <b>${wcText[d.wc]}</b></span><span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
     el.addEventListener('mouseenter',()=>setHot(d.id,false));
     el.addEventListener('mouseleave',()=>setHot(null,false));
     el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; setHot(d.id,false); renderMap(); });
@@ -293,7 +305,7 @@ function renderMap(){
     const priceTxt = d.price ? d.price : null;
     const phoneTxt = d.phones.length ? d.phones[0].split(' — ')[0] : 'без телефона';
     const nameTxt = (i+1)+'. '+(d.name.length>24? d.name.slice(0,23)+'…' : d.name);
-    const w=Math.min(180, Math.max(nameTxt.length*6.1, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14), h=13+12+(priceTxt?15:0)+8;
+    const w=Math.min(180, Math.max(nameTxt.length*6.1, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14), h=13+12+(priceTxt?15:0)+(d.rating?12:0)+8;
     const obstacles=[...boxes,...mk];
     const overlapArea=b=>obstacles.reduce((s,o)=>{const ox=Math.min(b.x+b.w,o.x+o.w)-Math.max(b.x,o.x), oy=Math.min(b.y+b.h,o.y+o.h)-Math.max(b.y,o.y); return s+(ox>0&&oy>0?ox*oy:0);},0);
     let best=null, bestScore=Infinity;
@@ -311,8 +323,8 @@ function renderMap(){
     const lx=Math.min(Math.max(x,best.x),best.x+best.w), ly=Math.min(Math.max(y,best.y),best.y+best.h);
     leaders.appendChild(S('line',{x1:x,y1:y,x2:lx,y2:ly,stroke:'var(--muted)','stroke-width':1,opacity:.7}));
     const lab=document.createElement('div'); lab.className=`lab ${d.cat==="nature"?"nat":"blt"}${state.hot===d.id?' hot':''}`; lab.style.left=best.x+'px'; lab.style.top=best.y+'px'; lab.style.width=w+'px'; lab.dataset.id=d.id;
-    lab.innerHTML=`<span class="n">${nameTxt}</span><span class="p">${phoneTxt}</span>${priceTxt?`<span class="c">${priceTxt}</span>`:''}`;
-    lab.title=`${d.km} км · ${d.min} мин`;
+    lab.innerHTML=`<span class="n">${nameTxt}</span><span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}`;
+    lab.title=`${d.km} км · ${d.min} мин${d.rating?` · Google ${d.rating}`:''}`;
     lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true));
     lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:'center'});} setHot(d.id,true);});
     labEl.appendChild(lab);
