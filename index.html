@@ -14,6 +14,7 @@
   --bg:#EEF1EC; --paper:#FFFFFF; --ink:#1B2620; --muted:#5C6B62; --line:#CBD3CC; --ring:#B4C0B7; --road:#D7DDD5;
   --nature:#2E7D4F; --nature-soft:#DCEFE2; --built:#B5622B; --built-soft:#F5E3D2;
   --accent:#1F5FA8; --price:#F4D77A; --price-ink:#3F3308; --warn:#B23A2E; --warn-soft:#F8E1DD; --ok:#2E7D4F; --star:#E0A11C; --star-off:#CFD5CE;
+  --gold:#E2AE2C; --gold-ink:#3A2C05; --silver:#C3CAD0; --silver-ink:#1F272B; --tgreen:#3E9A5C; --tgreen-ink:#FFFFFF; --tnone:#8A948D; --tnone-ink:#FFFFFF;
   --shadow:0 1px 2px rgba(20,30,24,.08), 0 8px 24px rgba(20,30,24,.08);
 }
 @media (prefers-color-scheme: dark){
@@ -21,6 +22,7 @@
     --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
     --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
     --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A; --star:#F2BB4C; --star-off:#3A4740;
+    --gold:#E9B93F; --gold-ink:#2E2304; --silver:#AEB6BD; --silver-ink:#151A1D; --tgreen:#4FAE6E; --tgreen-ink:#0E1A12; --tnone:#6B766F; --tnone-ink:#F0F3F0;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
 }
@@ -28,9 +30,18 @@
   --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
   --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
   --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A; --star:#F2BB4C; --star-off:#3A4740;
+  --gold:#E9B93F; --gold-ink:#2E2304; --silver:#AEB6BD; --silver-ink:#151A1D; --tgreen:#4FAE6E; --tgreen-ink:#0E1A12; --tnone:#6B766F; --tnone-ink:#F0F3F0;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
+.lab.big{font-size:12px;max-width:230px;padding:6px 9px 6px}
+.lab.big .n{font-size:13px}
+.lab.big .r{font-size:11px}
+.lab.big .c{font-size:11px}
+.lab.big .k{display:block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.lab.big .go{display:block;margin-top:4px;color:var(--accent);font-size:11px;font-weight:600}
+.legend .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px;vertical-align:-1px;border:2px solid var(--muted)}
+.legend .dot.nat{border-color:var(--nature)}.legend .dot.blt{border-color:var(--built)}
 .stars{position:relative;display:inline-block;font-size:13px;line-height:1;letter-spacing:1px;color:var(--star-off);vertical-align:-1px;white-space:nowrap}
 .stars::before{content:"★★★★★"}
 .stars i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--star);font-style:normal}
@@ -165,10 +176,10 @@ body.fullmap{overflow:hidden}
     </div>
     <div class="map" id="map"><svg id="svg" aria-hidden="true"></svg><div id="labels"></div></div>
     <div class="legend">
-      <span><i style="background:var(--nature)"></i>на природе</span>
-      <span><i style="background:var(--built)"></i>в застройке</span>
-      <span>кольца — 10 км по прямой; км в подписях — по дорогам</span>
-      <span>≈ — координата примерная (центр села)</span>
+      <span>заливка — Google: <span class="dot" style="background:var(--gold);border-color:var(--gold)"></span>≥4,5 <span class="dot" style="background:var(--silver);border-color:var(--silver)"></span>4,0–4,4 <span class="dot" style="background:var(--tgreen);border-color:var(--tgreen)"></span>ниже 4,0 <span class="dot" style="background:var(--tnone);border-color:var(--tnone)"></span>нет рейтинга</span>
+      <span>обводка: <span class="dot nat" style="background:var(--paper)"></span>на природе <span class="dot blt" style="background:var(--paper)"></span>в застройке</span>
+      <span>кольца — 10 км по прямой; км в подписях — по дорогам; ≈ — координата примерная</span>
+      <span id="tapHint" hidden>тап по кружку — карточка, тап по карточке — к описанию; двойной тап и щипок — масштаб</span>
     </div>
   </div>
   <div class="list" id="list"></div>
@@ -224,7 +235,11 @@ const km = (lat,lng)=>({x:(lng-IF.lng)*KX, y:-(lat-IF.lat)*KY});
 DATA.forEach(d=>{const p=km(d.lat,d.lng); d.x=p.x; d.y=p.y;});
 
 // ---------- filters ----------
-const state = {cat:"all", zones:{out:true,suburb:true,city:false}, phone:true, price:false, cx:0, cy:0, R:58, hot:null};
+const state = {cat:"all", zones:{out:true,suburb:true,city:false}, phone:true, price:false, cx:0, cy:0, R:58, hot:null, open:null};
+const compactMQ = window.matchMedia('(max-width:980px)');
+const isCompact = () => compactMQ.matches;
+const TIER = {gold:['var(--gold)','var(--gold-ink)'], silver:['var(--silver)','var(--silver-ink)'], green:['var(--tgreen)','var(--tgreen-ink)'], none:['var(--tnone)','var(--tnone-ink)']};
+function tier(d){ const v=parseFloat(String(d.rating||'').replace(',','.')); if(!(v>0)) return 'none'; return v>=4.5?'gold':v>=4?'silver':'green'; }
 function visible(){
   return DATA.filter(d => (state.cat==="all"||d.cat===state.cat) && state.zones[d.zone] && (!state.phone||d.phones.length) && (!state.price||d.price))
              .sort((a,b)=>a.km-b.km);
@@ -268,7 +283,7 @@ function renderList(items){
       <div class="meta">${ratingHtml(d)}<span>Туалет: <b>${wcText[d.wc]}</b></span><span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
     el.addEventListener('mouseenter',()=>setHot(d.id,false));
     el.addEventListener('mouseleave',()=>setHot(null,false));
-    el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; setHot(d.id,false); renderMap(); });
+    el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; state.open=d.id; setHot(d.id,false); renderMap(); if(isCompact()) mapCard.scrollIntoView({behavior:'smooth',block:'start'}); });
     listEl.appendChild(el);
   });
 }
@@ -297,15 +312,20 @@ function renderMap(){
   svg.appendChild(S('circle',{cx:ox,cy:oy,r:11,fill:'none',stroke:'var(--ink)','stroke-width':1.5}));
   const ct=S('text',{x:ox+15,y:oy+4,fill:'var(--ink)','font-size':12,'font-weight':700,'font-family':'Manrope, sans-serif'}); ct.textContent='Івано-Франківськ'; svg.appendChild(ct);
   // points + labels
-  const items=visible(); const boxes=[]; const mk=[];
-  items.forEach((d,i)=>{ const [x,y]=proj(d.x,d.y,W,H,sc); d.px=x; d.py=y; mk.push({x:x-10,y:y-10,w:20,h:20}); });
+  const compact=isCompact(); document.getElementById('tapHint').hidden=!compact;
+  const items=visible(); const boxes=[]; const mk=[]; const mr=compact?12:10;
+  items.forEach((d,i)=>{ const [x,y]=proj(d.x,d.y,W,H,sc); d.px=x; d.py=y; mk.push({x:x-mr,y:y-mr,w:2*mr,h:2*mr}); });
   const leaders=S('g',{}); svg.appendChild(leaders);
   items.forEach((d,i)=>{
     const x=d.px,y=d.py; if(x<-40||y<-40||x>W+40||y>H+40) return;
+    if(compact && state.open!==d.id) return;
     const priceTxt = d.price ? d.price : null;
     const phoneTxt = d.phones.length ? d.phones[0].split(' — ')[0] : 'без телефона';
-    const nameTxt = (i+1)+'. '+(d.name.length>24? d.name.slice(0,23)+'…' : d.name);
-    const w=Math.min(180, Math.max(nameTxt.length*6.1, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14), h=13+12+(priceTxt?15:0)+(d.rating?12:0)+8;
+    const nameTxt = compact ? (i+1)+'. '+d.name : (i+1)+'. '+(d.name.length>24? d.name.slice(0,23)+'…' : d.name);
+    const cw=compact?7.2:6.1;
+    const w=compact ? Math.min(230, Math.max(nameTxt.length*cw, phoneTxt.length*7, priceTxt?Math.min(priceTxt.length*6.4+12,210):0, 150)+20)
+                    : Math.min(180, Math.max(nameTxt.length*cw, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14);
+    const h= compact ? 16+15+14+(priceTxt?18:0)+(d.rating?14:0)+18+14 : 13+12+(priceTxt?15:0)+(d.rating?12:0)+8;
     const obstacles=[...boxes,...mk];
     const overlapArea=b=>obstacles.reduce((s,o)=>{const ox=Math.min(b.x+b.w,o.x+o.w)-Math.max(b.x,o.x), oy=Math.min(b.y+b.h,o.y+o.h)-Math.max(b.y,o.y); return s+(ox>0&&oy>0?ox*oy:0);},0);
     let best=null, bestScore=Infinity;
@@ -322,19 +342,21 @@ function renderMap(){
     boxes.push(best);
     const lx=Math.min(Math.max(x,best.x),best.x+best.w), ly=Math.min(Math.max(y,best.y),best.y+best.h);
     leaders.appendChild(S('line',{x1:x,y1:y,x2:lx,y2:ly,stroke:'var(--muted)','stroke-width':1,opacity:.7}));
-    const lab=document.createElement('div'); lab.className=`lab ${d.cat==="nature"?"nat":"blt"}${state.hot===d.id?' hot':''}`; lab.style.left=best.x+'px'; lab.style.top=best.y+'px'; lab.style.width=w+'px'; lab.dataset.id=d.id;
-    lab.innerHTML=`<span class="n">${nameTxt}</span><span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}`;
+    const lab=document.createElement('div'); lab.className=`lab ${d.cat==="nature"?"nat":"blt"}${compact?' big':''}${state.hot===d.id?' hot':''}`; lab.style.left=best.x+'px'; lab.style.top=best.y+'px'; lab.style.width=w+'px'; lab.dataset.id=d.id;
+    lab.innerHTML=`<span class="n">${nameTxt}</span>${compact?`<span class="k">${String(d.km).replace('.',',')} км · ${d.min} мин · ${d.village.split(',')[0]}</span>`:''}<span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}${compact?'<span class="go">Открыть описание ↓</span>':''}`;
     lab.title=`${d.km} км · ${d.min} мин${d.rating?` · Google ${d.rating}`:''}`;
-    lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true));
-    lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:'center'});} setHot(d.id,true);});
+    if(!compact){ lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true)); }
+    lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:compact?'start':'center'});} setHot(d.id,true);});
     labEl.appendChild(lab);
   });
   items.forEach((d,i)=>{ const x=d.px,y=d.py; if(x<-40||y<-40||x>W+40||y>H+40) return;
-    const g=S('g',{class:'mk'+(state.hot===d.id?' hot':''),style:'cursor:pointer'});
-    g.appendChild(S('circle',{cx:x,cy:y,r:state.hot===d.id?12:9,fill:d.cat==="nature"?'var(--nature)':'var(--built)',stroke:'var(--paper)','stroke-width':2}));
-    const t=S('text',{x:x,y:y+3.5,fill:'#fff','font-size':10,'font-weight':700,'text-anchor':'middle','font-family':'IBM Plex Sans, sans-serif'}); t.textContent=i+1; g.appendChild(t);
-    g.addEventListener('mouseenter',()=>setHot(d.id,true)); g.addEventListener('mouseleave',()=>setHot(null,true));
-    g.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c) c.scrollIntoView({behavior:'smooth',block:'center'});});
+    const g=S('g',{class:'mk'+(state.hot===d.id?' hot':''),style:'cursor:pointer','data-id':d.id});
+    const [fill,ink]=TIER[tier(d)]; const isOpen=state.open===d.id, isHot=state.hot===d.id;
+    g.appendChild(S('circle',{cx:x,cy:y,r:compact?20:14,fill:'transparent'}));
+    if(compact&&isOpen) g.appendChild(S('circle',{cx:x,cy:y,r:17,fill:'none',stroke:'var(--accent)','stroke-width':2}));
+    g.appendChild(S('circle',{cx:x,cy:y,r:(isHot||isOpen)?12:(compact?11:9),fill,stroke:d.cat==="nature"?'var(--nature)':'var(--built)','stroke-width':2.5}));
+    const t=S('text',{x:x,y:y+3.6,fill:ink,'font-size':compact?11:10,'font-weight':700,'text-anchor':'middle','font-family':'IBM Plex Sans, sans-serif','pointer-events':'none'}); t.textContent=i+1; g.appendChild(t);
+    if(!compact){ g.addEventListener('mouseenter',()=>setHot(d.id,true)); g.addEventListener('mouseleave',()=>setHot(null,true)); }
     svg.appendChild(g); });
   document.querySelectorAll('.btn[data-r]').forEach(b=>b.setAttribute('aria-pressed', Math.abs(+b.dataset.r-state.R)<1 && Math.abs(state.cx)<1 && Math.abs(state.cy)<1));
 }
@@ -353,18 +375,33 @@ mapEl.addEventListener('wheel',e=>{ e.preventDefault(); const W=mapEl.clientWidt
   const rect=mapEl.getBoundingClientRect(), mx=e.clientX-rect.left, my=e.clientY-rect.top;
   const kx=state.cx+(mx-W/2)/sc, ky=state.cy+(my-H/2)/sc; const f=e.deltaY>0?1.18:1/1.18; state.R=Math.min(90,Math.max(5,state.R*f));
   const sc2=Math.min(W,H)/(2*state.R); state.cx=kx-(mx-W/2)/sc2; state.cy=ky-(my-H/2)/sc2; renderMap(); },{passive:false});
-let drag=null;
-mapEl.addEventListener('pointerdown',e=>{ if(e.target.closest('.lab')) return; drag={x:e.clientX,y:e.clientY,cx:state.cx,cy:state.cy}; mapEl.classList.add('drag'); mapEl.setPointerCapture(e.pointerId); });
-mapEl.addEventListener('pointermove',e=>{ if(!drag) return; const W=mapEl.clientWidth,H=mapEl.clientHeight, sc=Math.min(W,H)/(2*state.R); state.cx=drag.cx-(e.clientX-drag.x)/sc; state.cy=drag.cy-(e.clientY-drag.y)/sc; renderMap(); });
-const endDrag=()=>{drag=null;mapEl.classList.remove('drag');};
-mapEl.addEventListener('pointerup',endDrag); mapEl.addEventListener('pointercancel',endDrag);
+let drag=null, pinch=null, lastTap=null; const ptrs=new Map();
+function markerTap(id){
+  if(isCompact()){ state.open = state.open===id ? null : id; renderMap(); return; }
+  const c=document.getElementById('c-'+id); if(c) c.scrollIntoView({behavior:'smooth',block:'center'}); setHot(id,true);
+}
+function zoomAt(mx,my,f){ const W=mapEl.clientWidth,H=mapEl.clientHeight, sc=Math.min(W,H)/(2*state.R); const kx=state.cx+(mx-W/2)/sc, ky=state.cy+(my-H/2)/sc; state.R=Math.min(90,Math.max(5,state.R*f)); const sc2=Math.min(W,H)/(2*state.R); state.cx=kx-(mx-W/2)/sc2; state.cy=ky-(my-H/2)/sc2; renderMap(); }
+mapEl.addEventListener('pointerdown',e=>{ if(e.target.closest('.lab')) return; ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); mapEl.setPointerCapture(e.pointerId);
+  if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch={d0:Math.hypot(a.x-b.x,a.y-b.y),R0:state.R}; drag=null; mapEl.classList.remove('drag'); return; }
+  const m=e.target.closest('.mk'); drag={x:e.clientX,y:e.clientY,cx:state.cx,cy:state.cy,id:m?m.getAttribute('data-id'):null,moved:false}; mapEl.classList.add('drag'); });
+mapEl.addEventListener('pointermove',e=>{ if(ptrs.has(e.pointerId)) ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch && ptrs.size===2){ const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); if(d<10) return; const rect=mapEl.getBoundingClientRect(); const mx=(a.x+b.x)/2-rect.left, my=(a.y+b.y)/2-rect.top; const target=Math.min(90,Math.max(5,pinch.R0*pinch.d0/d)); zoomAt(mx,my,target/state.R); return; }
+  if(!drag) return; if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6) drag.moved=true; if(!drag.moved) return; const W=mapEl.clientWidth,H=mapEl.clientHeight, sc=Math.min(W,H)/(2*state.R); state.cx=drag.cx-(e.clientX-drag.x)/sc; state.cy=drag.cy-(e.clientY-drag.y)/sc; renderMap(); });
+const endDrag=e=>{ ptrs.delete(e.pointerId); if(pinch){ if(ptrs.size<2) pinch=null; drag=null; mapEl.classList.remove('drag'); return; }
+  if(drag && !drag.moved){ const now=Date.now(); const rect=mapEl.getBoundingClientRect(); const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    if(lastTap && now-lastTap.t<320 && Math.hypot(mx-lastTap.x,my-lastTap.y)<24){ lastTap=null; zoomAt(mx,my,1/1.8); }
+    else { lastTap={t:now,x:mx,y:my}; if(drag.id) markerTap(drag.id); else if(isCompact() && state.open){ state.open=null; renderMap(); } } }
+  drag=null; mapEl.classList.remove('drag'); };
+mapEl.addEventListener('pointerup',endDrag); mapEl.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId); pinch=null; drag=null; mapEl.classList.remove('drag');});
+mapEl.addEventListener('dblclick',e=>e.preventDefault());
+compactMQ.addEventListener('change',()=>{ state.open=null; renderMap(); });
 
 // fullscreen (CSS-based, works inside sandboxed frames)
 const mapCard=document.querySelector('.mapcard'), fsBtn=document.getElementById('fs');
 function setFull(on){ mapCard.classList.toggle('full',on); document.body.classList.toggle('fullmap',on); fsBtn.textContent=on?'Свернуть':'На весь экран'; fsBtn.setAttribute('aria-pressed',on); requestAnimationFrame(renderMap); }
 fsBtn.addEventListener('click',()=>setFull(!mapCard.classList.contains('full')));
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mapCard.classList.contains('full')) setFull(false); });
-function update(){ const items=visible(); renderList(items); renderMap(); document.getElementById('count').textContent=`Показано ${items.length} из ${DATA.length}`; }
+function update(){ const items=visible(); if(state.open && !items.some(d=>d.id===state.open)) state.open=null; renderList(items); renderMap(); document.getElementById('count').textContent=`Показано ${items.length} из ${DATA.length}`; }
 let rt; window.addEventListener('resize',()=>{clearTimeout(rt); rt=setTimeout(renderMap,120);});
 update();
 </script>
