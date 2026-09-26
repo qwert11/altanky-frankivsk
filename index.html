@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Альтанки с мангалом и базы отдыха до часа езды от Ивано-Франковска: схема-карта, телефоны, цены, километраж по дорогам, фильтр «на природе / в застройке».">
+<meta name="theme-color" content="#EEF1EC">
+<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Мангал за Франковском</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --paper:#FFFFFF; --ink:#1B2620; --muted:#5C6B62; --line:#CBD3CC; --ring:#B4C0B7; --road:#D7DDD5;
+  --nature:#2E7D4F; --nature-soft:#DCEFE2; --built:#B5622B; --built-soft:#F5E3D2;
+  --accent:#1F5FA8; --price:#F4D77A; --price-ink:#3F3308; --warn:#B23A2E; --warn-soft:#F8E1DD; --ok:#2E7D4F;
+  --shadow:0 1px 2px rgba(20,30,24,.08), 0 8px 24px rgba(20,30,24,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
+    --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
+    --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121816; --paper:#1B2320; --ink:#E7ECE7; --muted:#9AA79E; --line:#2E3A33; --ring:#3A4740; --road:#26302A;
+  --nature:#5CC48A; --nature-soft:#173826; --built:#E39A63; --built-soft:#3D2717;
+  --accent:#7FB2F0; --price:#5C4A12; --price-ink:#F7E4A0; --warn:#F08A7E; --warn-soft:#3F211E; --ok:#5CC48A;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45;padding-inline:16px;padding-block:20px 48px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+h1,h2,h3{font-family:Manrope,"IBM Plex Sans",system-ui,sans-serif;text-wrap:balance;margin:0}
+.wrap{max-width:1800px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:10px 32px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+h1{font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.lede{max-width:70ch;color:var(--muted);margin-top:6px;font-size:13px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.stat b{font-family:Manrope,sans-serif;font-size:22px;font-weight:800;display:block;line-height:1}
+.stat span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+.filters .grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.filters .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:2px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;cursor:pointer;line-height:1.1}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.nat[aria-pressed="true"]{background:var(--nature);border-color:var(--nature);color:#fff}
+.chip.blt[aria-pressed="true"]{background:var(--built);border-color:var(--built);color:#fff}
+.chip:focus-visible,.btn:focus-visible,.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tog{display:inline-flex;gap:6px;align-items:center;font-size:13px;cursor:pointer}
+.tog input{accent-color:var(--accent);width:15px;height:15px;margin:0}
+.count{margin-left:auto;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,1fr);gap:16px;align-items:start}
+.mapcard{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;height:calc(100vh - 16px);background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.mapcard.full{position:fixed;inset:0;height:100vh;height:100dvh;z-index:50;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body.fullmap{overflow:hidden}
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr}
+  .mapcard:not(.full){position:static;height:auto}
+  .mapcard:not(.full) .map{aspect-ratio:1/1.05;flex:none}
+}
+.maptools{display:flex;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:4px 9px;font:inherit;font-size:12px;cursor:pointer;line-height:1.2}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.maptools .hint{margin-left:auto;font-size:11px;color:var(--muted)}
+.map{position:relative;width:100%;flex:1;min-height:0;max-width:100%;overflow:hidden;touch-action:none;cursor:grab;user-select:none;background:var(--paper)}
+.map.drag{cursor:grabbing}
+.map svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.lab{position:absolute;pointer-events:auto;cursor:pointer;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:3px 6px 3px;font-size:10px;line-height:1.2;box-shadow:0 1px 3px rgba(0,0,0,.12);max-width:180px;white-space:nowrap;overflow:hidden}
+.lab .n{font-weight:600;font-size:10.5px;display:block;overflow:hidden;text-overflow:ellipsis}
+.lab .p{display:block;color:var(--muted);font-variant-numeric:tabular-nums}
+.lab .c{display:block;margin-top:2px;width:max-content;max-width:100%;overflow:hidden;text-overflow:ellipsis;background:var(--price);color:var(--price-ink);border-radius:4px;padding:0 5px;font-size:9.5px;line-height:1.35;font-weight:600}
+.lab .c.q{background:transparent;color:var(--muted);border:1px dashed var(--line);font-weight:500}
+.lab.nat{border-left:3px solid var(--nature)}
+.lab.blt{border-left:3px solid var(--built)}
+.lab.hot,.mk.hot circle{outline:2px solid var(--accent)}
+.lab.hot{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:8px 12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.list{display:flex;flex-direction:column;gap:10px}
+.divider{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:10px 2px 2px;display:flex;align-items:center;gap:10px}
+.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px 10px 10px;display:grid;grid-template-columns:26px minmax(0,1fr);gap:3px 8px;font-size:13px;transition:box-shadow .15s,border-color .15s}
+.card.nat{border-left:4px solid var(--nature)}
+.card.blt{border-left:4px solid var(--built)}
+.card.hot{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.rank{font-family:Manrope,sans-serif;font-weight:800;font-size:16px;line-height:1;color:var(--muted);grid-row:1/span 5;padding-top:2px;font-variant-numeric:tabular-nums}
+.card .top{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.card h3{font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+.pill{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;border-radius:999px;padding:1px 7px;font-weight:600;line-height:1.3}
+.pill.nat{background:var(--nature-soft);color:var(--nature)}
+.pill.blt{background:var(--built-soft);color:var(--built)}
+.pill.zone{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.addr{color:var(--muted);font-size:12px}
+.row{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font-variant-numeric:tabular-nums}
+.km{font-family:Manrope,sans-serif;font-weight:800;font-size:14px}
+.km small{font-family:"IBM Plex Sans",sans-serif;font-weight:500;color:var(--muted);font-size:11.5px;margin-left:4px}
+.tel{font-weight:600;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line);font-size:13px}
+.tel:hover{border-color:var(--accent);color:var(--accent)}
+.tel small{font-weight:400;color:var(--muted)}
+.price{background:var(--price);color:var(--price-ink);border-radius:5px;padding:1px 7px;font-weight:600;font-size:12px}
+.price.q{background:transparent;border:1px dashed var(--line);color:var(--muted);font-weight:500}
+.desc{font-size:12.5px;color:var(--ink);line-height:1.4}
+.meta{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:11.5px;color:var(--muted)}
+.meta b{font-weight:600;color:var(--ink)}
+.wc-yes{color:var(--ok)}.wc-no{color:var(--warn)}
+.meta a{color:var(--muted)}
+.gm{margin-left:auto;font-size:12px;text-decoration:none;color:var(--accent);font-weight:500}
+.note{margin-top:22px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font-size:12.5px;color:var(--muted);max-width:none}
+.note p{margin:0 0 6px}.note p:last-child{margin:0}
+.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Мангал за Франковском</h1>
+    <p class="lede">Альтанки с мангалом и базы отдыха в пределах часа езды от Ивано-Франковска. Точки отсортированы по километражу от Ратуши по дорогам, у каждой телефон, найденная цена и что известно о туалете. Данные собраны 26.09.2026.</p>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="filters" role="group" aria-label="Фильтры">
+  <div class="grp"><span class="lbl">Где</span>
+    <button class="chip" data-cat="all" aria-pressed="true">Все</button>
+    <button class="chip nat" data-cat="nature" aria-pressed="false">На природе</button>
+    <button class="chip blt" data-cat="built" aria-pressed="false">В застройке</button>
+  </div>
+  <div class="grp"><span class="lbl">Зона</span>
+    <label class="tog"><input type="checkbox" id="z-out" checked> за городом, 10 км и дальше</label>
+    <label class="tog"><input type="checkbox" id="z-suburb" checked> пригород, до 10 км</label>
+    <label class="tog"><input type="checkbox" id="z-city"> в черте города</label>
+  </div>
+  <div class="grp">
+    <label class="tog"><input type="checkbox" id="f-phone" checked> только с телефоном</label>
+    <label class="tog"><input type="checkbox" id="f-price"> только с ценой</label>
+  </div>
+  <div class="count" id="count"></div>
+</div>
+
+<div class="layout">
+  <div class="mapcard">
+    <div class="maptools">
+      <button class="btn" data-r="12" id="r12">15 км</button>
+      <button class="btn" data-r="27">30 км</button>
+      <button class="btn" data-r="58" aria-pressed="true">60 км</button>
+      <button class="btn" id="zin" aria-label="Приблизить">+</button>
+      <button class="btn" id="zout" aria-label="Отдалить">−</button>
+      <button class="btn" id="fs" aria-pressed="false">На весь экран</button>
+      <span class="hint">колесо — масштаб, тянуть — двигать, Esc — выйти</span>
+    </div>
+    <div class="map" id="map"><svg id="svg" aria-hidden="true"></svg><div id="labels"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--nature)"></i>на природе</span>
+      <span><i style="background:var(--built)"></i>в застройке</span>
+      <span>кольца — 10 км по прямой; км в подписях — по дорогам</span>
+      <span>≈ — координата примерная (центр села)</span>
+    </div>
+  </div>
+  <div class="list" id="list"></div>
+</div>
+
+<div class="note">
+  <p><b>Как читать.</b> «Цена» показана только там, где она опубликована; у большинства баз стоимость альтанки называют по телефону, поэтому пометка «уточнить» — это не отсутствие услуги. Туалет: <span class="wc-yes">есть</span> — подтверждён источником; «при заведении» — есть ресторан или гостиница, но отдельно не проверялось; «уточнить» — данных нет.</p>
+  <p><b>Что не вошло.</b> Бассейн-комплексы (М'ята, Villa Laguna, Очерет, Underhill, Crystal Pool) — со своей едой и мангалом туда нельзя. Озеро Едельвейс (Хом'яківка Коломийського р-ну) и Колиба Шандра (Долина) — больше часа езды. Ресторан «Медовиця» (Чукалівка) на картах помечен «тимчасово закрито».</p>
+  <p><b>Источники:</b> pravda.if.ua, findme.in.ua, list.in.ua, goldfishnet.in.ua, fishergo.com.ua, mega.if.ua, karpaty.info, rybalka.pp.ua, rybka.if.ua, сайты заведений, карточки Google Maps (рейтинги и координаты). Схема, а не карта: дороги показаны условно, расстояния и время в пути — OSRM.</p>
+</div>
+</div>
+
+<script>
+const IF = {lat:48.9226, lng:24.7111};
+const DATA = [
+ {id:"maizli", name:"Набережна «На Майзлях»", cat:"built", zone:"city", village:"Івано-Франківськ, вул. Микитинецька 7", lat:48.9134028, lng:24.7418559, km:4.2, min:8, phones:["095 569 48 48"], price:null, priceNote:"мангал и дрова включены в аренду", desc:"Альтанки в черте города у берега, спортплощадки, работает до 17:00. В цену входят мангал и дрова.", wc:"unknown", rating:"4,1", reviews:18, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"],["Instagram @altanky.if","https://www.instagram.com/altanky.if/"]]},
+ {id:"lelech", name:"Колиба «Лелеч»", cat:"built", zone:"suburb", village:"Угринів, вул. Галицька 22А", lat:48.9588048, lng:24.7046635, km:4.8, min:7, phones:["050 285 07 29"], price:null, desc:"Колыба с альтанками при ресторане украинской кухни, банкетный зал, сауна. Чек в ресторане 200–400 ₴.", wc:"venue", rating:"4,4", reviews:654, src:[["findme.in.ua","https://findme.in.ua/ua/ivano-frankivsk/companies/keyword__orenda-altanki/"]]},
+ {id:"terasa", name:"Тераса Микитинецька", cat:"built", zone:"suburb", village:"Микитинці, вул. Маланюка (Декабристів) 58", lat:48.908264, lng:24.7431663, approx:true, km:4.9, min:8, phones:["050 433 47 04"], price:"2000 ₴/день", priceNote:"до 30 человек, без почасовой оплаты", desc:"Закрытая территория под аренду целиком, детская зона. Мангал и дрова — уточнить при звонке.", wc:"unknown", rating:"5,0", reviews:2, src:[["list.in.ua","https://list.in.ua/391793/"]]},
+ {id:"vovchynets", name:"Вовчинецьке озеро", cat:"nature", zone:"suburb", village:"Вовчинець, вул. Приозерна", lat:48.9428673, lng:24.7599822, km:5.7, min:10, phones:["050 286 94 38"], price:null, desc:"Альтанки с мангалами на берегу озера общего пользования, рыбалка бесплатная, открыто круглосуточно.", wc:"unknown", rating:"4,1", reviews:404, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"]]},
+ {id:"smerekova", name:"Ресторація «Смерекова хата»", cat:"built", zone:"suburb", village:"Вовчинець, пров. Підгірний 23", lat:48.9556597, lng:24.7543004, km:5.7, min:9, phones:["050 261 47 35"], price:null, desc:"Альтанки и летняя площадка при ресторане украинской кухни, зал до 150 человек, живая музыка.", wc:"venue", rating:"4,4", reviews:382, src:[["list.in.ua","https://list.in.ua/"]]},
+ {id:"nastavkakh", name:"Колиба «На Ставках» (Нива на ставках)", cat:"nature", zone:"suburb", village:"Угринів, Калуське шосе 3 — поворот направо перед «Чорним замком», указатель «На ставках»", lat:48.9592693, lng:24.6667813, km:6.2, min:10, phones:["066 789 74 24","097 411 51 38","050 281 92 37"], price:null, priceNote:"рыбалка 100 ₴/день, до 3 кг", desc:"Березовая роща и каскад прудов, альтанки, колыба, спортплощадки; на месте можно купить уголь. Открыто 12:00–23:00.", wc:"unknown", rating:"4,2", reviews:340, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"],["goldfishnet","https://goldfishnet.in.ua/places/3263"]]},
+ {id:"fazenda", name:"FAZENDA family park", cat:"built", zone:"city", village:"Івано-Франківськ, Калуське шосе 25 (граница города)", lat:48.9587273, lng:24.6574581, km:6.2, min:8, phones:["067 000 00 75"], price:"чек 400–1600 ₴", priceNote:"ресторан, аренда альтанки — уточнить", desc:"Альтанки у воды — открытые, полуоткрытые, с гамаками, мангал при каждой; ресторан, аниматоры, катамараны. Открывается в 12:00.", wc:"venue", rating:"4,5", reviews:2005, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"]]},
+ {id:"villapark", name:"Ресторан Villa Park", cat:"built", zone:"suburb", village:"Підпечери, вул. Січових Стрільців 65", lat:48.9082319, lng:24.8011934, km:8.2, min:11, phones:["067 100 21 00"], price:null, desc:"Альтанки при ресторане, VIP-зал, живая музыка. За рестораном — комплекс с бассейном Villa Laguna (097 100 21 11, вход 700–800 ₴, со своей едой нельзя).", wc:"venue", rating:"4,6", reviews:919, src:[["findme.in.ua","https://findme.in.ua/ua/ivano-frankivsk/companies/keyword__orenda-altanki/"],["villa-laguna.com.ua","https://www.villa-laguna.com.ua/"]]},
+ {id:"gartenberg", name:"Садова гора Gartenberg", cat:"nature", zone:"suburb", village:"Колодіївка, через Вовчинецькі гори", lat:48.9656946, lng:24.7724014, km:8.3, min:16, phones:["097 373 72 73"], price:"альтанка 1000 ₴", priceNote:"плюс вход 700 ₴ взрослый / 400 ₴ детский, зона гриля включена", desc:"База на холмах с панорамой на лес, бассейн с подогревом, спортивная рыбалка, волейбол и баскетбол. 10:00–20:00. Единственный бассейн-комплекс в округе, где гриль включён в правила.", wc:"venue", rating:"3,7", reviews:80, src:[["mega.if.ua","https://mega.if.ua/vodni-kompleksy-poblyzu-ivano-frankivska-10-miscz-dlya-litnogo-dozvillya-foto/"],["pravda.if.ua","https://pravda.if.ua/top-10-basejniv-dovkola-fraknivsioka-de-mozhna-shovatysio-vid-litniooyi-speky/"]]},
+ {id:"hollywood", name:"«Голлівуд»", cat:"nature", zone:"suburb", village:"Підлужжя", lat:48.938938, lng:24.77108, approx:true, km:8.7, min:13, phones:["068 670 77 17"], price:null, desc:"Альтанки среди полей, рядом ферма карпатских буйволов и лавандовые поля. Координата — центр села, дорогу уточнить по телефону.", wc:"unknown", rating:null, reviews:0, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"]]},
+ {id:"legion", name:"ССК «СВД Легіон»", cat:"nature", zone:"suburb", village:"Підлужжя, вул. Промислова 9", lat:48.9296016, lng:24.7884034, km:8.8, min:16, phones:["095 487 13 74 — альтанки","095 719 09 34"], price:null, priceNote:"мангал и дрова включены; рыбалка 150 ₴/день", desc:"Альтанки на 10, 14 и 30 человек у системы прудов среди берёз, волейбол, парковка, за забором звери. Стрелковый стенд на той же территории. Вт–Вс 10:00–20:00, понедельник выходной.", wc:"yes", rating:"4,6", reviews:322, src:[["pravda.if.ua","https://pravda.if.ua/top-5-miscz-dlya-relaksu-na-pryrodi/"],["goldfishnet","https://goldfishnet.in.ua/map/place-info/3259"]]},
+ {id:"pidyavorom", name:"Комплекс «Явір» (готель «Під явором»)", cat:"built", zone:"suburb", village:"Драгомирчани, вул. Шкільна 13", lat:48.8873173, lng:24.6355894, km:9.8, min:13, phones:["095 849 43 49"], price:null, desc:"Аренда альтанок при гостинично-ресторанном комплексе, финская сауна, банкеты до 250 человек.", wc:"venue", rating:"4,3", reviews:414, src:[["findme.in.ua","https://findme.in.ua/ua/ivano-frankivsk/companies/keyword__orenda-altanki/"]]},
+ {id:"kniazhyi", name:"«Княжий двір»", cat:"built", zone:"out", village:"Тисмениця, вул. Галицька 96", lat:48.904964, lng:24.829208, km:10.2, min:13, phones:["067 927 74 95","067 593 29 32"], price:null, desc:"Альтанки и открытый огонь для шашлыка при ресторане, форель, три зала. 10:00–24:00.", wc:"venue", rating:"4,3", reviews:80, src:[["karpaty.info","https://www.karpaty.info/ua/uk/if/fr/tysmenytsya/restaurants/"]]},
+ {id:"sad", name:"Старий яблуневий сад", cat:"nature", zone:"out", village:"Тязів, вул. Галицька 12", lat:49.0218663, lng:24.6970645, km:12.6, min:15, phones:["050 373 13 49"], price:"по запросу", priceNote:"зависит от площади, дня и числа гостей; вся локация от 16 000 ₴/сутки", desc:"Сад 0,5 га: крытая терраса 80 м² и открытая 60 м², мангал, дрова, качели, дом. Формат — камерные праздники и семейные дни, не «заехать на шашлык».", wc:"yes", rating:"5,0", reviews:167, src:[["pravda.if.ua","https://pravda.if.ua/basejny-ta-riznomanitni-atrakcziyi-dlya-ditej-top-5-vidpochynkovyh-zon-dlya-simej-na-prykarpatti/"],["oldappleorchard.com.ua","https://www.oldappleorchard.com.ua/"]]},
+ {id:"bratkivtsi", name:"Рибалка Братківці", cat:"nature", zone:"out", village:"Братківці, урочище Поляна", lat:48.811218, lng:24.72611, approx:true, km:15.7, min:21, phones:["050 748 19 15"], price:"500 ₴ с рыбалкой / 1000 ₴ без", priceNote:"дрова, мангал, шампуры включены", desc:"Три альтанки у прудов. Сектор рыбалки 500 ₴/день (до 2 кг, дальше 150 ₴/кг), ночь +200 ₴. Сауна 200–300 ₴/ч, чан 4200 ₴/сутки, домик 4000 ₴/сутки, трансфер из города 700 ₴.", wc:"yes", rating:null, reviews:0, src:[["rybalka.pp.ua","https://rybalka.pp.ua/"]]},
+ {id:"rybne", name:"Рибне господарство «Тисмениця»", cat:"nature", zone:"out", village:"Хом'яківка (Тисменицька громада)", lat:48.866183, lng:24.830855, km:16.9, min:25, phones:["066 903 91 52"], price:"рыбалка 150 ₴/день", priceNote:"парковка 20 ₴; альтанка — уточнить", desc:"Пруд 40 га, альтанки, причалы, зона барбекю, место под кемпинг. Только в светлое время суток.", wc:"unknown", rating:"4,3", reviews:null, src:[["fishergo","https://map.fishergo.com.ua/ivano-frankovskaya-oblast/511-rybnoe-khozyajstvo-tysmenitsa-v-ivano-frankovskoj-oblasti.html"]]},
+ {id:"budmo", name:"Екосадиба «Будьмо здорові»", cat:"nature", zone:"out", village:"Хом'яківка, вул. Івана Франка 45", lat:48.848359, lng:24.83144, km:17.7, min:22, phones:["066 081 92 99"], price:null, desc:"Восемь альтанок на трёх гектарах зелени, гриль-ресторан, актив-парк для детей, тюбинг, кони, сауна, бассейн, рыбалка. Работает круглый год.", wc:"venue", rating:"4,2", reviews:425, src:[["pravda.if.ua","https://pravda.if.ua/basejny-ta-riznomanitni-atrakcziyi-dlya-ditej-top-5-vidpochynkovyh-zon-dlya-simej-na-prykarpatti/"],["ecosadyba.if.ua","http://ecosadyba.if.ua/"]]},
+ {id:"kozak", name:"«Козацький острів»", cat:"nature", zone:"out", village:"Чорнолізці, вул. Панська 1", lat:48.8410905, lng:24.8851724, km:20.6, min:32, phones:["096 313 53 03","097 737 30 26 — бар"], price:null, priceNote:"номера 600–1200 ₴/сутки", desc:"Альтанки на воде с мангалом и дровами на берегу Лебединого озера, лодки, рыбалка, зоопарк с оленями, детская площадка. Пн–Чт 11:00–22:00, Пт–Вс до 23:00.", wc:"venue", rating:"4,4", reviews:790, src:[["kozackiy-ostriv.if.ua","https://kozackiy-ostriv.if.ua/"]]},
+ {id:"bystrytsia", name:"Південний берег Бистриці", cat:"nature", zone:"out", village:"под Богородчанами, берег Быстрицы", lat:48.808143, lng:24.5184725, km:23.2, min:28, phones:[], price:"бесплатно", priceNote:"публичная зона, без брони", desc:"Общедоступная зона для пикников с мангалами на берегу реки. Телефона и бронирования нет — приезжать наудачу.", wc:"unknown", rating:"4,7", reviews:7, src:[["Google Maps","https://www.google.com/maps/search/?api=1&query=48.808143,24.5184725"]]},
+ {id:"dzherelo", name:"Приватна садиба «Джерело»", cat:"nature", zone:"out", village:"околиця Калуша, сельский зелёный туризм", lat:49.003971, lng:24.3419589, km:35.6, min:40, phones:["095 200 29 16"], price:null, desc:"Альтанки на берегу озера, у каждой свой мангал; лодка, купание в родниковой воде, качели, волейбол, теннис, батут.", wc:"unknown", rating:"4,7", reviews:160, src:[["kalushcity.gov.ua","https://kalushcity.gov.ua/catalog/7"]]},
+ {id:"bovshiv", name:"Альтанки, рибалка, дозвілля — Бовшів", cat:"nature", zone:"out", village:"Бовшів, Бурштинське водосховище", lat:49.2271254, lng:24.6866084, km:40.2, min:49, phones:[], price:null, desc:"Зона отдыха на водохранилище с альтанками и рыбалкой. Телефон в открытых источниках не найден.", wc:"unknown", rating:"4,4", reviews:5, src:[["Google Maps","https://www.google.com/maps/search/?api=1&query=49.2271254,24.6866084"]]},
+ {id:"yavir", name:"«Явір Агро»", cat:"nature", zone:"out", village:"Вишнівці (Середній Майдан), вул. Незалежна 77, Надвірнянщина", lat:48.6276076, lng:24.7190031, km:41.2, min:58, phones:["066 479 80 03"], price:null, priceNote:"гостиница от 741 ₴/ночь", desc:"Пять прудов на 2 га, просторные альтанки, ресторан, сауна на дровах, чаны, крытый бассейн с подогревом, детская площадка.", wc:"venue", rating:"4,1", reviews:64, src:[["yaviragro.in.ua","https://yaviragro.in.ua/"]]},
+ {id:"krayneba", name:"«Край неба»", cat:"nature", zone:"out", village:"между Раківчиком и Лісною Слобідкою, под Коломыей", lat:48.592948, lng:24.954262, approx:true, km:50.7, min:63, phones:["093 063 10 20"], price:"300 ₴ день / 400 ₴ ночь / 500 ₴ сутки", priceNote:"хижина на двоих 600 ₴", desc:"Место под палатку с альтанкой, мангалом и дровами, мини-зоопарк, лес с грибами. Формально чуть больше часа езды.", wc:"unknown", rating:null, reviews:0, src:[["rybka.if.ua","https://rybka.if.ua/"]]}
+];
+
+const TOWNS = [["Тисмениця",48.9017,24.8478],["Богородчани",48.8047,24.5378],["Надвірна",48.6333,24.5667],["Калуш",49.0333,24.3667],["Галич",49.1233,24.7278],["Бурштин",49.2583,24.6333],["Тлумач",48.8667,25.0],["Коломия",48.53,25.04],["Рогатин",49.4092,24.6117],["Долина",48.97,24.01],["Яремче",48.45,24.55],["Отинія",48.7333,24.8667],["Солотвин",48.7167,24.3833],["Лисець",48.85,24.60],["Єзупіль",49.03,24.79]];
+const ROADS = [
+  [[48.9226,24.7111],[48.9017,24.8478],[48.8667,25.0]],
+  [[48.9226,24.7111],[48.7333,24.8667],[48.53,25.04]],
+  [[48.9226,24.7111],[48.85,24.60],[48.8047,24.5378],[48.6333,24.5667],[48.45,24.55]],
+  [[48.9226,24.7111],[49.0333,24.3667],[48.97,24.01]],
+  [[48.9226,24.7111],[49.03,24.79],[49.1233,24.7278],[49.2583,24.6333],[49.4092,24.6117]],
+  [[48.8047,24.5378],[48.7167,24.3833]]
+];
+
+const KX = 111.32*Math.cos(IF.lat*Math.PI/180), KY = 111.32;
+const km = (lat,lng)=>({x:(lng-IF.lng)*KX, y:-(lat-IF.lat)*KY});
+DATA.forEach(d=>{const p=km(d.lat,d.lng); d.x=p.x; d.y=p.y;});
+
+// ---------- filters ----------
+const state = {cat:"all", zones:{out:true,suburb:true,city:false}, phone:true, price:false, cx:0, cy:0, R:58, hot:null};
+function visible(){
+  return DATA.filter(d => (state.cat==="all"||d.cat===state.cat) && state.zones[d.zone] && (!state.phone||d.phones.length) && (!state.price||d.price))
+             .sort((a,b)=>a.km-b.km);
+}
+document.querySelectorAll('.chip[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+  state.cat=b.dataset.cat; document.querySelectorAll('.chip[data-cat]').forEach(x=>x.setAttribute('aria-pressed',x===b)); update();
+}));
+[['z-out','out'],['z-suburb','suburb'],['z-city','city']].forEach(([id,z])=>document.getElementById(id).addEventListener('change',e=>{state.zones[z]=e.target.checked;update();}));
+document.getElementById('f-phone').addEventListener('change',e=>{state.phone=e.target.checked;update();});
+document.getElementById('f-price').addEventListener('change',e=>{state.price=e.target.checked;update();});
+
+// ---------- stats ----------
+(function(){
+  const n=DATA.length, nat=DATA.filter(d=>d.cat==="nature").length, pr=DATA.filter(d=>d.price).length, wc=DATA.filter(d=>d.wc==="yes").length;
+  document.getElementById('stats').innerHTML = `<div class="stat"><b>${n}</b><span>мест</span></div><div class="stat"><b>${nat}</b><span>на природе</span></div><div class="stat"><b>${n-nat}</b><span>в застройке</span></div><div class="stat"><b>${pr}</b><span>с ценой</span></div><div class="stat"><b>${wc}</b><span>туалет подтверждён</span></div>`;
+})();
+
+// ---------- list ----------
+const listEl = document.getElementById('list');
+const zoneName = {city:"в черте города", suburb:"пригород", out:"за городом"};
+const wcText = {yes:'<span class="wc-yes">есть</span>', venue:'при заведении', unknown:'уточнить'};
+function tel(p){const num=p.split(' — ')[0]; const note=p.split(' — ')[1]; return `<a class="tel" href="tel:+38${num.replace(/\D/g,'')}">${num}${note?` <small>${note}</small>`:''}</a>`;}
+function renderList(items){
+  listEl.innerHTML='';
+  if(!items.length){listEl.innerHTML='<div class="empty">Под такие фильтры ничего не осталось — снимите один из них.</div>';return;}
+  let div10=false, div60=false;
+  items.forEach((d,i)=>{
+    if(!div10 && d.km>=10){div10=true; const s=document.createElement('div'); s.className='divider'; s.textContent='дальше 10 км'; listEl.appendChild(s);}
+    if(!div60 && d.min>60){div60=true; const s=document.createElement('div'); s.className='divider'; s.textContent='больше часа езды'; listEl.appendChild(s);}
+    const el=document.createElement('article'); el.className=`card ${d.cat==="nature"?"nat":"blt"}`; el.id='c-'+d.id; el.tabIndex=0;
+    const phones = d.phones.length ? d.phones.map(tel).join(' · ') : '<span class="pill warn">телефона нет</span>';
+    const price = d.price ? `<span class="price">${d.price}</span>` : `<span class="price q">цена — уточнить</span>`;
+    el.innerHTML = `<div class="rank">${i+1}</div>
+      <div class="top"><h3>${d.name}</h3><span class="pill ${d.cat==="nature"?"nat":"blt"}">${d.cat==="nature"?"на природе":"в застройке"}</span><span class="pill zone">${zoneName[d.zone]}</span>${d.approx?'<span class="pill zone">≈ координата</span>':''}</div>
+      <div class="addr">${d.village}</div>
+      <div class="row"><span class="km">${String(d.km).replace('.',',')} км<small>${d.min} мин</small></span>${phones}${price}</div>
+      <div class="desc">${d.desc}${d.priceNote?` <span style="color:var(--muted)">${d.priceNote}.</span>`:''}</div>
+      <div class="meta"><span>Туалет: <b>${wcText[d.wc]}</b></span>${d.rating?`<span>Google <b>${d.rating}</b>${d.reviews?` (${d.reviews})`:''}</span>`:''}<span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
+    el.addEventListener('mouseenter',()=>setHot(d.id,false));
+    el.addEventListener('mouseleave',()=>setHot(null,false));
+    el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; setHot(d.id,false); renderMap(); });
+    listEl.appendChild(el);
+  });
+}
+
+// ---------- map ----------
+const mapEl=document.getElementById('map'), svg=document.getElementById('svg'), labEl=document.getElementById('labels');
+const NS='http://www.w3.org/2000/svg';
+function S(tag,attrs){const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e;}
+function proj(x,y,W,H,sc){return [W/2+(x-state.cx)*sc, H/2+(y-state.cy)*sc];}
+function renderMap(){
+  const W=mapEl.clientWidth, H=mapEl.clientHeight; if(!W) return;
+  const sc=Math.min(W,H)/(2*state.R);
+  svg.innerHTML=''; labEl.innerHTML='';
+  const [ox,oy]=proj(0,0,W,H,sc);
+  // rings
+  for(let r=10;r<=60;r+=10){ svg.appendChild(S('circle',{cx:ox,cy:oy,r:r*sc,fill:'none',stroke:'var(--ring)','stroke-width':r%20?0.6:1,'stroke-dasharray':r%20?'3 4':''}));
+    if(r*sc>28){const t=S('text',{x:ox+4,y:oy-r*sc-3,fill:'var(--muted)','font-size':10,'font-family':'IBM Plex Sans, sans-serif'}); t.textContent=r+' км'; svg.appendChild(t);} }
+  // roads
+  ROADS.forEach(rd=>{ const pts=rd.map(([la,lo])=>{const p=km(la,lo); return proj(p.x,p.y,W,H,sc).join(',');}).join(' '); svg.appendChild(S('polyline',{points:pts,fill:'none',stroke:'var(--road)','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'})); });
+  // towns
+  TOWNS.forEach(([n,la,lo])=>{ const p=km(la,lo); const [x,y]=proj(p.x,p.y,W,H,sc); if(x<-20||y<-20||x>W+20||y>H+20) return;
+    svg.appendChild(S('rect',{x:x-3,y:y-3,width:6,height:6,fill:'var(--muted)',opacity:.7}));
+    const t=S('text',{x:x+6,y:y+4,fill:'var(--muted)','font-size':11,'font-family':'IBM Plex Sans, sans-serif'}); t.textContent=n; svg.appendChild(t); });
+  // city
+  svg.appendChild(S('circle',{cx:ox,cy:oy,r:6,fill:'var(--ink)'}));
+  svg.appendChild(S('circle',{cx:ox,cy:oy,r:11,fill:'none',stroke:'var(--ink)','stroke-width':1.5}));
+  const ct=S('text',{x:ox+15,y:oy+4,fill:'var(--ink)','font-size':12,'font-weight':700,'font-family':'Manrope, sans-serif'}); ct.textContent='Івано-Франківськ'; svg.appendChild(ct);
+  // points + labels
+  const items=visible(); const boxes=[]; const mk=[];
+  items.forEach((d,i)=>{ const [x,y]=proj(d.x,d.y,W,H,sc); d.px=x; d.py=y; mk.push({x:x-10,y:y-10,w:20,h:20}); });
+  const leaders=S('g',{}); svg.appendChild(leaders);
+  items.forEach((d,i)=>{
+    const x=d.px,y=d.py; if(x<-40||y<-40||x>W+40||y>H+40) return;
+    const priceTxt = d.price ? d.price : null;
+    const phoneTxt = d.phones.length ? d.phones[0].split(' — ')[0] : 'без телефона';
+    const nameTxt = (i+1)+'. '+(d.name.length>24? d.name.slice(0,23)+'…' : d.name);
+    const w=Math.min(180, Math.max(nameTxt.length*6.1, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14), h=13+12+(priceTxt?15:0)+8;
+    const obstacles=[...boxes,...mk];
+    const overlapArea=b=>obstacles.reduce((s,o)=>{const ox=Math.min(b.x+b.w,o.x+o.w)-Math.max(b.x,o.x), oy=Math.min(b.y+b.h,o.y+o.h)-Math.max(b.y,o.y); return s+(ox>0&&oy>0?ox*oy:0);},0);
+    let best=null, bestScore=Infinity;
+    outer: for(const dist of [14,40,70,105,145,190,240,300]){ for(let a=0;a<360;a+=30){
+      const r=a*Math.PI/180, ax=x+Math.cos(r)*dist, ay=y+Math.sin(r)*dist;
+      let left = Math.cos(r)>0.3? ax : Math.cos(r)<-0.3? ax-w : ax-w/2;
+      let top  = Math.sin(r)>0.3? ay : Math.sin(r)<-0.3? ay-h : ay-h/2;
+      left=Math.min(Math.max(2,left),W-w-2); top=Math.min(Math.max(2,top),H-h-2);
+      const b={x:left,y:top,w,h};
+      const score=overlapArea(b)+dist*0.5;
+      if(score===dist*0.5){best=b;break outer;}
+      if(score<bestScore){bestScore=score;best=b;}
+    }}
+    boxes.push(best);
+    const lx=Math.min(Math.max(x,best.x),best.x+best.w), ly=Math.min(Math.max(y,best.y),best.y+best.h);
+    leaders.appendChild(S('line',{x1:x,y1:y,x2:lx,y2:ly,stroke:'var(--muted)','stroke-width':1,opacity:.7}));
+    const lab=document.createElement('div'); lab.className=`lab ${d.cat==="nature"?"nat":"blt"}${state.hot===d.id?' hot':''}`; lab.style.left=best.x+'px'; lab.style.top=best.y+'px'; lab.style.width=w+'px'; lab.dataset.id=d.id;
+    lab.innerHTML=`<span class="n">${nameTxt}</span><span class="p">${phoneTxt}</span>${priceTxt?`<span class="c">${priceTxt}</span>`:''}`;
+    lab.title=`${d.km} км · ${d.min} мин`;
+    lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true));
+    lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:'center'});} setHot(d.id,true);});
+    labEl.appendChild(lab);
+  });
+  items.forEach((d,i)=>{ const x=d.px,y=d.py; if(x<-40||y<-40||x>W+40||y>H+40) return;
+    const g=S('g',{class:'mk'+(state.hot===d.id?' hot':''),style:'cursor:pointer'});
+    g.appendChild(S('circle',{cx:x,cy:y,r:state.hot===d.id?12:9,fill:d.cat==="nature"?'var(--nature)':'var(--built)',stroke:'var(--paper)','stroke-width':2}));
+    const t=S('text',{x:x,y:y+3.5,fill:'#fff','font-size':10,'font-weight':700,'text-anchor':'middle','font-family':'IBM Plex Sans, sans-serif'}); t.textContent=i+1; g.appendChild(t);
+    g.addEventListener('mouseenter',()=>setHot(d.id,true)); g.addEventListener('mouseleave',()=>setHot(null,true));
+    g.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c) c.scrollIntoView({behavior:'smooth',block:'center'});});
+    svg.appendChild(g); });
+  document.querySelectorAll('.btn[data-r]').forEach(b=>b.setAttribute('aria-pressed', Math.abs(+b.dataset.r-state.R)<1 && Math.abs(state.cx)<1 && Math.abs(state.cy)<1));
+}
+function setHot(id,fromMap){
+  state.hot=id;
+  document.querySelectorAll('.card').forEach(c=>c.classList.toggle('hot',c.id==='c-'+id));
+  document.querySelectorAll('.lab').forEach(l=>l.classList.remove('hot'));
+  document.querySelectorAll('.mk').forEach(m=>m.classList.remove('hot'));
+  if(id){ const l=labEl.querySelector('[data-id="'+id+'"]'); if(l) l.classList.add('hot'); }
+}
+// zoom / pan
+document.querySelectorAll('.btn[data-r]').forEach(b=>b.addEventListener('click',()=>{state.R=+b.dataset.r;state.cx=0;state.cy=0;renderMap();}));
+document.getElementById('zin').addEventListener('click',()=>{state.R=Math.max(5,state.R/1.4);renderMap();});
+document.getElementById('zout').addEventListener('click',()=>{state.R=Math.min(90,state.R*1.4);renderMap();});
+mapEl.addEventListener('wheel',e=>{ e.preventDefault(); const W=mapEl.clientWidth,H=mapEl.clientHeight, sc=Math.min(W,H)/(2*state.R);
+  const rect=mapEl.getBoundingClientRect(), mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const kx=state.cx+(mx-W/2)/sc, ky=state.cy+(my-H/2)/sc; const f=e.deltaY>0?1.18:1/1.18; state.R=Math.min(90,Math.max(5,state.R*f));
+  const sc2=Math.min(W,H)/(2*state.R); state.cx=kx-(mx-W/2)/sc2; state.cy=ky-(my-H/2)/sc2; renderMap(); },{passive:false});
+let drag=null;
+mapEl.addEventListener('pointerdown',e=>{ if(e.target.closest('.lab')) return; drag={x:e.clientX,y:e.clientY,cx:state.cx,cy:state.cy}; mapEl.classList.add('drag'); mapEl.setPointerCapture(e.pointerId); });
+mapEl.addEventListener('pointermove',e=>{ if(!drag) return; const W=mapEl.clientWidth,H=mapEl.clientHeight, sc=Math.min(W,H)/(2*state.R); state.cx=drag.cx-(e.clientX-drag.x)/sc; state.cy=drag.cy-(e.clientY-drag.y)/sc; renderMap(); });
+const endDrag=()=>{drag=null;mapEl.classList.remove('drag');};
+mapEl.addEventListener('pointerup',endDrag); mapEl.addEventListener('pointercancel',endDrag);
+
+// fullscreen (CSS-based, works inside sandboxed frames)
+const mapCard=document.querySelector('.mapcard'), fsBtn=document.getElementById('fs');
+function setFull(on){ mapCard.classList.toggle('full',on); document.body.classList.toggle('fullmap',on); fsBtn.textContent=on?'Свернуть':'На весь экран'; fsBtn.setAttribute('aria-pressed',on); requestAnimationFrame(renderMap); }
+fsBtn.addEventListener('click',()=>setFull(!mapCard.classList.contains('full')));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mapCard.classList.contains('full')) setFull(false); });
+function update(){ const items=visible(); renderList(items); renderMap(); document.getElementById('count').textContent=`Показано ${items.length} из ${DATA.length}`; }
+let rt; window.addEventListener('resize',()=>{clearTimeout(rt); rt=setTimeout(renderMap,120);});
+update();
+</script>
+</body>
+</html>
