@@ -34,11 +34,18 @@
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
+.lab .k{display:block;color:var(--muted);font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lab .k b{color:var(--ink);font-weight:600}
+.wc{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;border-radius:4px;padding:0 4px;line-height:1.45;vertical-align:0;border:1px solid var(--line);background:var(--bg);color:var(--ink);white-space:nowrap}
+.wc-y{background:var(--nature-soft);color:var(--nature);border-color:var(--nature)}
+.wc-u{background:transparent;color:var(--muted);border-style:dashed}
+.meta .wc{font-size:10px;margin-right:2px}
 .lab.big{font-size:12px;max-width:230px;padding:6px 9px 6px}
 .lab.big .n{font-size:13px}
 .lab.big .r{font-size:11px}
 .lab.big .c{font-size:11px}
-.lab.big .k{display:block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.lab.big .k{font-size:11px}
+.lab.big .wc{font-size:10.5px}
 .lab.big .go{display:block;margin-top:4px;color:var(--accent);font-size:11px;font-weight:600}
 .legend .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px;vertical-align:-1px;border:2px solid var(--muted)}
 .legend .dot.nat{border-color:var(--nature)}.legend .dot.blt{border-color:var(--built)}
@@ -178,7 +185,8 @@ body.fullmap{overflow:hidden}
     <div class="legend">
       <span>заливка — Google: <span class="dot" style="background:var(--gold);border-color:var(--gold)"></span>≥4,5 <span class="dot" style="background:var(--silver);border-color:var(--silver)"></span>4,0–4,4 <span class="dot" style="background:var(--tgreen);border-color:var(--tgreen)"></span>ниже 4,0 <span class="dot" style="background:var(--tnone);border-color:var(--tnone)"></span>нет рейтинга</span>
       <span>обводка: <span class="dot nat" style="background:var(--paper)"></span>на природе <span class="dot blt" style="background:var(--paper)"></span>в застройке</span>
-      <span>кольца — 10 км по прямой; км в подписях — по дорогам; ≈ — координата примерная</span>
+      <span>туалет: <span class="wc wc-y">WC ✓</span> есть · <span class="wc">WC ≈</span> при заведении, не проверено · <span class="wc wc-u">WC ?</span> нет данных</span>
+      <span>кольца — 10 км по прямой; км и минуты — по дорогам от Ратуши; ≈ у координаты — центр села</span>
       <span id="tapHint" hidden>тап по кружку — карточка, тап по карточке — к описанию; двойной тап и щипок — масштаб</span>
     </div>
   </div>
@@ -264,6 +272,8 @@ const wcText = {yes:'<span class="wc-yes">есть</span>', venue:'при зав
 function tel(p){const num=p.split(' — ')[0]; const note=p.split(' — ')[1]; return `<a class="tel" href="tel:+38${num.replace(/\D/g,'')}">${num}${note?` <small>${note}</small>`:''}</a>`;}
 function stars(r,sm){const v=parseFloat(String(r).replace(',','.')); if(!(v>0)) return ''; return `<span class="stars${sm?' sm':''}" role="img" aria-label="${r} из 5"><i style="width:${(v/5*100).toFixed(0)}%"></i></span>`;}
 function reviewsWord(n){const m10=n%10,m100=n%100; if(m10===1&&m100!==11) return 'отзыв'; if(m10>=2&&m10<=4&&(m100<12||m100>14)) return 'отзыва'; return 'отзывов';}
+const WC = {yes:['✓','есть','wc-y'], venue:['≈','при заведении, отдельно не проверено',''], unknown:['?','нет данных','wc-u']};
+function wcBadge(d){ const [s,t,c]=WC[d.wc]; return `<span class="wc ${c}" title="Туалет: ${t}">WC ${s}</span>`; }
 function ratingHtml(d){ if(!d.rating) return '<span class="rate"><small>без рейтинга Google</small></span>'; return `<span class="rate">${stars(d.rating)}<b>${d.rating}</b><small>${d.reviews?`${d.reviews} ${reviewsWord(d.reviews)} · `:''}Google</small></span>`; }
 function renderList(items){
   listEl.innerHTML='';
@@ -280,7 +290,7 @@ function renderList(items){
       <div class="addr">${d.village}</div>
       <div class="row"><span class="km">${String(d.km).replace('.',',')} км<small>${d.min} мин</small></span>${phones}${price}</div>
       <div class="desc">${d.desc}${d.priceNote?` <span style="color:var(--muted)">${d.priceNote}.</span>`:''}</div>
-      <div class="meta">${ratingHtml(d)}<span>Туалет: <b>${wcText[d.wc]}</b></span><span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
+      <div class="meta">${ratingHtml(d)}<span>${wcBadge(d)} <b>${wcText[d.wc]}</b></span><span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
     el.addEventListener('mouseenter',()=>setHot(d.id,false));
     el.addEventListener('mouseleave',()=>setHot(null,false));
     el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; state.open=d.id; setHot(d.id,false); renderMap(); if(isCompact()) mapCard.scrollIntoView({behavior:'smooth',block:'start'}); });
@@ -323,9 +333,11 @@ function renderMap(){
     const phoneTxt = d.phones.length ? d.phones[0].split(' — ')[0] : 'без телефона';
     const nameTxt = compact ? (i+1)+'. '+d.name : (i+1)+'. '+(d.name.length>24? d.name.slice(0,23)+'…' : d.name);
     const cw=compact?7.2:6.1;
-    const w=compact ? Math.min(230, Math.max(nameTxt.length*cw, phoneTxt.length*7, priceTxt?Math.min(priceTxt.length*6.4+12,210):0, 150)+20)
-                    : Math.min(180, Math.max(nameTxt.length*cw, phoneTxt.length*6, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14);
-    const h= compact ? 16+15+14+(priceTxt?18:0)+(d.rating?14:0)+18+14 : 13+12+(priceTxt?15:0)+(d.rating?12:0)+8;
+    const kmStr=String(d.km).replace('.',',');
+    const kTxt=`${kmStr} км · ${d.min} мин`+(compact?` · ${d.village.split(',')[0]}`:'');
+    const w=compact ? Math.min(230, Math.max(nameTxt.length*cw, phoneTxt.length*7, kTxt.length*6.6+44, priceTxt?Math.min(priceTxt.length*6.4+12,210):0, 150)+20)
+                    : Math.min(180, Math.max(nameTxt.length*cw, phoneTxt.length*6, kTxt.length*5.8+40, priceTxt?Math.min(priceTxt.length*5.6+10,168):0)+14);
+    const h= compact ? 16+15+14+(priceTxt?18:0)+(d.rating?14:0)+18+14 : 13+12+13+(priceTxt?15:0)+(d.rating?12:0)+8;
     const obstacles=[...boxes,...mk];
     const overlapArea=b=>obstacles.reduce((s,o)=>{const ox=Math.min(b.x+b.w,o.x+o.w)-Math.max(b.x,o.x), oy=Math.min(b.y+b.h,o.y+o.h)-Math.max(b.y,o.y); return s+(ox>0&&oy>0?ox*oy:0);},0);
     let best=null, bestScore=Infinity;
@@ -343,7 +355,7 @@ function renderMap(){
     const lx=Math.min(Math.max(x,best.x),best.x+best.w), ly=Math.min(Math.max(y,best.y),best.y+best.h);
     leaders.appendChild(S('line',{x1:x,y1:y,x2:lx,y2:ly,stroke:'var(--muted)','stroke-width':1,opacity:.7}));
     const lab=document.createElement('div'); lab.className=`lab ${d.cat==="nature"?"nat":"blt"}${compact?' big':''}${state.hot===d.id?' hot':''}`; lab.style.left=best.x+'px'; lab.style.top=best.y+'px'; lab.style.width=w+'px'; lab.dataset.id=d.id;
-    lab.innerHTML=`<span class="n">${nameTxt}</span>${compact?`<span class="k">${String(d.km).replace('.',',')} км · ${d.min} мин · ${d.village.split(',')[0]}</span>`:''}<span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}${compact?'<span class="go">Открыть описание ↓</span>':''}`;
+    lab.innerHTML=`<span class="n">${nameTxt}</span><span class="k"><b>${kmStr} км</b> · ${d.min} мин${compact?` · ${d.village.split(',')[0]}`:''} ${wcBadge(d)}</span><span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}${compact?'<span class="go">Открыть описание ↓</span>':''}`;
     lab.title=`${d.km} км · ${d.min} мин${d.rating?` · Google ${d.rating}`:''}`;
     if(!compact){ lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true)); }
     lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:compact?'start':'center'});} setHot(d.id,true);});
