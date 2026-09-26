@@ -79,6 +79,8 @@ h1{font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.02em;line-hei
 .tog{display:inline-flex;gap:6px;align-items:center;font-size:13px;cursor:pointer}
 .tog input{accent-color:var(--accent);width:15px;height:15px;margin:0}
 .count{margin-left:auto;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+#copy{font-size:12.5px}
+#copy.done{background:var(--nature-soft);color:var(--nature);border-color:var(--nature)}
 .layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,1fr);gap:16px;align-items:start}
 .mapcard{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;height:calc(100vh - 16px);background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
 .mapcard.full{position:fixed;inset:0;height:100vh;height:100dvh;z-index:50;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -167,6 +169,7 @@ body.fullmap{overflow:hidden}
     <label class="tog"><input type="checkbox" id="f-phone" checked> только с телефоном</label>
     <label class="tog"><input type="checkbox" id="f-price"> только с ценой</label>
   </div>
+  <button class="btn" id="copy" type="button" title="Ссылка содержит текущие фильтры и выбранную точку">Скопировать ссылку</button>
   <div class="count" id="count"></div>
 </div>
 
@@ -243,7 +246,38 @@ const km = (lat,lng)=>({x:(lng-IF.lng)*KX, y:-(lat-IF.lat)*KY});
 DATA.forEach(d=>{const p=km(d.lat,d.lng); d.x=p.x; d.y=p.y;});
 
 // ---------- filters ----------
-const state = {cat:"all", zones:{out:true,suburb:true,city:false}, phone:true, price:false, cx:0, cy:0, R:58, hot:null, open:null};
+const state = {cat:"all", zones:{out:true,suburb:true,city:false}, phone:true, price:false, cx:0, cy:0, R:58, hot:null, open:null, sel:null};
+// ---------- URL <-> state (shareable links) ----------
+function readURL(){
+  let q; try{ q=new URLSearchParams(location.search); }catch(e){ return; }
+  const cat=q.get('cat'); if(['all','nature','built'].includes(cat)) state.cat=cat;
+  const z=q.get('zone'); if(z!==null){ const set=new Set(z.split(',')); ['out','suburb','city'].forEach(k=>state.zones[k]=set.has(k)); }
+  if(q.get('phone')!==null) state.phone=q.get('phone')!=='0';
+  if(q.get('price')!==null) state.price=q.get('price')==='1';
+  const p=q.get('p'); if(p && DATA.some(d=>d.id===p)) state.sel=p;
+}
+function writeURL(){
+  const q=new URLSearchParams();
+  if(state.cat!=='all') q.set('cat',state.cat);
+  const z=['out','suburb','city'].filter(k=>state.zones[k]).join(','); if(z!=='out,suburb') q.set('zone',z||'none');
+  if(!state.phone) q.set('phone','0');
+  if(state.price) q.set('price','1');
+  if(state.sel) q.set('p',state.sel);
+  const s=q.toString();
+  try{ history.replaceState(null,'',location.pathname+(s?'?'+s:'')+location.hash); }catch(e){}
+}
+function syncUI(){
+  document.querySelectorAll('.chip[data-cat]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cat===state.cat));
+  document.getElementById('z-out').checked=state.zones.out; document.getElementById('z-suburb').checked=state.zones.suburb; document.getElementById('z-city').checked=state.zones.city;
+  document.getElementById('f-phone').checked=state.phone; document.getElementById('f-price').checked=state.price;
+}
+function select(id){ state.sel=id; writeURL(); }
+document.getElementById('copy').addEventListener('click',()=>{
+  const btn=document.getElementById('copy'); const url=location.href;
+  const done=()=>{ btn.textContent='Ссылка скопирована'; btn.classList.add('done'); setTimeout(()=>{btn.textContent='Скопировать ссылку'; btn.classList.remove('done');},1800); };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(()=>window.prompt('Скопируйте ссылку:',url));
+  else window.prompt('Скопируйте ссылку:',url);
+});
 const compactMQ = window.matchMedia('(max-width:980px)');
 const isCompact = () => compactMQ.matches;
 const TIER = {gold:['var(--gold)','var(--gold-ink)'], silver:['var(--silver)','var(--silver-ink)'], green:['var(--tgreen)','var(--tgreen-ink)'], none:['var(--tnone)','var(--tnone-ink)']};
@@ -293,7 +327,7 @@ function renderList(items){
       <div class="meta">${ratingHtml(d)}<span>${wcBadge(d)} <b>${wcText[d.wc]}</b></span><span>Источник: ${d.src.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(', ')}</span><a class="gm" href="https://www.google.com/maps/search/?api=1&query=${d.lat},${d.lng}" target="_blank" rel="noopener">Маршрут в Google Maps ↗</a></div>`;
     el.addEventListener('mouseenter',()=>setHot(d.id,false));
     el.addEventListener('mouseleave',()=>setHot(null,false));
-    el.addEventListener('click',e=>{ if(e.target.closest('a')) return; state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; state.open=d.id; setHot(d.id,false); renderMap(); if(isCompact()) mapCard.scrollIntoView({behavior:'smooth',block:'start'}); });
+    el.addEventListener('click',e=>{ if(e.target.closest('a')) return; select(d.id); state.cx=d.x; state.cy=d.y; if(state.R>20) state.R=14; state.open=d.id; setHot(d.id,false); renderMap(); if(isCompact()) mapCard.scrollIntoView({behavior:'smooth',block:'start'}); });
     listEl.appendChild(el);
   });
 }
@@ -358,7 +392,7 @@ function renderMap(){
     lab.innerHTML=`<span class="n">${nameTxt}</span><span class="k"><b>${kmStr} км</b> · ${d.min} мин${compact?` · ${d.village.split(',')[0]}`:''} ${wcBadge(d)}</span><span class="p">${phoneTxt}</span>${d.rating?`<span class="r">${stars(d.rating,true)} ${d.rating}${d.reviews?` (${d.reviews})`:''}</span>`:''}${priceTxt?`<span class="c">${priceTxt}</span>`:''}${compact?'<span class="go">Открыть описание ↓</span>':''}`;
     lab.title=`${d.km} км · ${d.min} мин${d.rating?` · Google ${d.rating}`:''}`;
     if(!compact){ lab.addEventListener('mouseenter',()=>setHot(d.id,true)); lab.addEventListener('mouseleave',()=>setHot(null,true)); }
-    lab.addEventListener('click',()=>{const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:compact?'start':'center'});} setHot(d.id,true);});
+    lab.addEventListener('click',()=>{select(d.id); const c=document.getElementById('c-'+d.id); if(c){c.scrollIntoView({behavior:'smooth',block:compact?'start':'center'});} setHot(d.id,true);});
     labEl.appendChild(lab);
   });
   items.forEach((d,i)=>{ const x=d.px,y=d.py; if(x<-40||y<-40||x>W+40||y>H+40) return;
@@ -389,6 +423,7 @@ mapEl.addEventListener('wheel',e=>{ e.preventDefault(); const W=mapEl.clientWidt
   const sc2=Math.min(W,H)/(2*state.R); state.cx=kx-(mx-W/2)/sc2; state.cy=ky-(my-H/2)/sc2; renderMap(); },{passive:false});
 let drag=null, pinch=null, lastTap=null; const ptrs=new Map();
 function markerTap(id){
+  select(id);
   if(isCompact()){ state.open = state.open===id ? null : id; renderMap(); return; }
   const c=document.getElementById('c-'+id); if(c) c.scrollIntoView({behavior:'smooth',block:'center'}); setHot(id,true);
 }
@@ -413,9 +448,10 @@ const mapCard=document.querySelector('.mapcard'), fsBtn=document.getElementById(
 function setFull(on){ mapCard.classList.toggle('full',on); document.body.classList.toggle('fullmap',on); fsBtn.textContent=on?'Свернуть':'На весь экран'; fsBtn.setAttribute('aria-pressed',on); requestAnimationFrame(renderMap); }
 fsBtn.addEventListener('click',()=>setFull(!mapCard.classList.contains('full')));
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && mapCard.classList.contains('full')) setFull(false); });
-function update(){ const items=visible(); if(state.open && !items.some(d=>d.id===state.open)) state.open=null; renderList(items); renderMap(); document.getElementById('count').textContent=`Показано ${items.length} из ${DATA.length}`; }
+function update(){ const items=visible(); if(state.open && !items.some(d=>d.id===state.open)) state.open=null; renderList(items); renderMap(); document.getElementById('count').textContent=`Показано ${items.length} из ${DATA.length}`; writeURL(); }
 let rt; window.addEventListener('resize',()=>{clearTimeout(rt); rt=setTimeout(renderMap,120);});
-update();
+readURL(); syncUI(); update();
+if(state.sel){ const d=DATA.find(x=>x.id===state.sel); if(d && visible().some(x=>x.id===d.id)){ state.cx=d.x; state.cy=d.y; state.R=14; state.open=d.id; setHot(d.id,false); renderMap(); setTimeout(()=>{ const c=document.getElementById('c-'+d.id); if(c) c.scrollIntoView({behavior:'smooth',block:isCompact()?'start':'center'}); },250); } }
 </script>
 </body>
 </html>
